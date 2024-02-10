@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>All hail Machuca -- a great righthander</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="" />
+
+  <!-- calls for the arcgis API's CSS and JS files-->
+  <link rel="stylesheet" href="https://js.arcgis.com/4.28/esri/themes/light/main.css" />
+
+  <script src="https://js.arcgis.com/4.28/"></script>
+
+  <!-- Adding the modules for full screen map app-->
+  <script>  
+    require([
+      "esri/config", 
+      "esri/Map", 
+      "esri/views/MapView",  
+
+      // Adding in the modules for graphics and graphics layers
+      "esri/Graphic",  
+      "esri/layers/GraphicsLayer", 
+
+      //adding in the module for the feature layers
+      "esri/layers/FeatureLayer",
+
+      // Adding locate, search and basemap gallery
+      "esri/widgets/Locate", 
+      "esri/widgets/Search", 
+      "esri/widgets/BasemapGallery"
+    ], (esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Locate, Search, BasemapGallery) => { 
+      
+      esriConfig.apiKey = "AAPKad326cc7bcc84403ba8d6e5d75e1c216dZOCMYxyqe8Xx6vzlRhWc5FBpZ9YINE2zzacOcvncG8DsWXQT-2XA5QCTvQE3qT4";
+
+      //create the map
+      const map = new Map({
+        basemap: "osm-light-gray"
+      });
+
+      //Creating the overall map view and sending it to the viewDiv container
+      const view = new MapView({
+        map: map,  
+        center: [-66.53043017718466, 18.478205310277776], // Longitude, latitude
+        zoom: 13, // Zoom level
+        container: "viewDiv" // Div element
+      });
+
+      // Adding the contstuctor for the graphics layer
+      const graphicsLayer = new GraphicsLayer();  
+      map.add(graphicsLayer);
+
+      // Adding a point
+      const point = { //Create a point  
+        type: "point",  
+        longitude: -66.5296,    //long lat of the Machuca surf break in Manati, Puerto Rico
+        latitude: 18.4836
+      };
+
+      // Adding a marker for the point
+      const simpleMarkerSymbol = {  
+        type: "simple-marker",  
+        color: [164, 38, 38],  // kind of a brick red
+        style: "x",
+        outline: {  
+          color: [164, 38, 38], // White  
+          width: 3
+          }  
+        };
+
+      // Adding a popup -- first the template
+      const popupTemplate = {
+        title: "{Name}",
+        content: "{Description}"
+      }
+
+      // Adding the data elements for the template
+      const attributes = {
+        Name: "Machuca",
+        Description: "A beautiful right-hand reef break. To get there, you either swim across Rio Grande (watch out for caimans!) or park in Hacienda La Esperanza."
+      }
+
+      // Combine the point and the marker 
+      const pointGraphic = new Graphic({  
+        geometry: point,  
+        symbol: simpleMarkerSymbol,
+        
+        // Adding pop-up properties
+        attributes: attributes,
+        popupTemplate: popupTemplate
+      });
+
+      // Add the point graphic to the map
+      graphicsLayer.add(pointGraphic);
+
+      // Add a polyline for a trail from the parking lot to surf break
+      // These are the paths
+      const paths = [
+        [  // first path
+          [-66.52255783909149, 18.4810516141503],
+          [-66.5234188990924, 18.48183948550025],
+          [-66.52474114198405, 18.483074054695415],
+          [-66.52515159252758, 18.483407250303124],
+          [-66.52550291033259, 18.48361838381196],
+          [-66.52585074978634, 18.483697558814015],
+          [-66.52602466954934, 18.483875702425184],       
+          [-66.52630294107806, 18.48390539300944],
+          [-66.5267412187358, 18.483846011835798],
+          [-66.52733950252252, 18.483852609744986],
+          [-66.52831345304921, 18.48358539421684],
+          [-66.52915161652668, 18.483113899248888]
+
+        ]
+      ];
+
+      // create the line
+      const polyline = {
+        type: "polyline",
+        paths: paths
+      };
+
+      // Style the line
+      const polylineSymbol = {
+        type: "simple-line",
+        color: [164, 38, 38],  // kind of a brick red
+        width: 4
+      };
+
+      const lineAtt = {
+        Name: "Path to Machuca", // name of the object
+        Description: "From Thursday through Sunday you can park at Hacienda La Esperanza and walk to Machuca. It's easier than swimming across the river." // description
+      };
+
+      // Combine the point and the marker 
+      const polylineGraphic = new Graphic({  
+        geometry: polyline,  
+        symbol: polylineSymbol,
+        attributes: lineAtt,
+        popupTemplate: popupTemplate
+      });
+
+      // Add the point graphic to the map
+      graphicsLayer.add(polylineGraphic);
+
+      // Create a polygon showing the river mouth access
+      const polygon = {
+          type: "polygon",
+          rings: [
+              [-66.53477663463971, 18.48179322004595], 
+              [-66.53489133429031, 18.4808050962459], 
+              [-66.53290320701306, 18.48147593320804], 
+              [-66.53298923175102, 18.48207424504052]  
+          ]
+      };
+
+      // create the fill options for the polygon
+      const simpleFillSymbol = {
+          type: "simple-fill",
+          color: [164, 38, 38, 0.5],  // brick red, opacity 50%
+          outline: {
+              color: [255, 255, 255],
+              width: 1
+          }
+      };
+
+       // Create some popup info for the polygon
+       const polyAtt = {
+        Name: "Rio Grande river mouth",
+        Description: "Cross this river mouth to get to Machuca. Beware of the caimans!"
+       };
+
+      // Create the graphic and set the geometry to the polygon
+      const polygonGraphic = new Graphic({
+        geometry: polygon,
+        symbol: simpleFillSymbol,
+        attributes: polyAtt,
+        popupTemplate: popupTemplate
+      });
+
+      // Add the polygon graphic to the graphics layer
+      graphicsLayer.add(polygonGraphic);
+
+      // Add a popup for the bridges layer
+      const popupBridges = {
+        "title": "<b>Bridge Intersects:</b> {features_desc_006a}",
+        "content": "<table><tr><th>Owner</th><th>Year built</th><th>Daily traffic</th><th>Bridge condition</th></tr><tr><td>{owner_022}</td><td>{year_built_027}</td><td>{adt_029}</td><td>{bridge_condition}</td></tr></table><br><b>Deck condition:</b> {deck_cond_058}<br><br><b>Superstructure:</b> {superstructure_cond_059}<br><br><b>Substructure:</b> {substructure_cond_060}"
+      }
+
+      
+      // add a custom icon to display bridges
+      const bridgesRenderer = {
+        "type": "simple",
+        "symbol": {
+          "type": "picture-marker",
+          "url": "https://raw.githubusercontent.com/kcrowebasspro/agol/main/icons/bridge-large.png",
+          "width": "20px",
+          "height": "20px"
+        }
+      }
+
+      // Add a bridges layer from the AGOL REST service
+      const usbridgesLayer = new FeatureLayer({
+        url: "https://services2.arcgis.com/FiaPA4ga0iQKduv3/arcgis/rest/services/National_Bridge_Inventory_v1/FeatureServer",
+        
+        //adding the popup here
+        outFields: ["features_desc_006a","owner_022","year_built_027","adt_029","bridge_condition","deck_cond_058","superstructure_cond_059","substructure_cond_060"],
+        renderer: bridgesRenderer,
+        popupTemplate: popupBridges
+        });
+
+      // Add the layer to the map
+      map.add(usbridgesLayer);
+
+      //const to make the airport labels
+      const airportLabels = {
+        symbol: {
+          type: "text",
+          color: "#FFFFFF",
+          haloColor: "#5E8D74",
+          haloSize: "2px",
+          font: {
+            size: "12px",
+            family: "Noto Sans",
+            style: "italic",
+            weight: "normal"
+          }
+        },
+        labelPlacement: "above-center",
+        labelExpressionInfo: {
+          expression: "$feature.Fac_Name"
+        }
+      };
+
+      // add a custom icon to display airports
+      const airportRenderer = {
+        "type": "simple",
+        "symbol": {
+          "type": "picture-marker",
+          "url": "https://raw.githubusercontent.com/kcrowebasspro/agol/main/icons/black-24dp/1x/outline_local_airport_black_24dp.png",
+          "width": "18px",
+          "height": "18px"
+        }
+      }
+
+      // Add the airports layer from the AGOL REST service
+      const usairportsLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/US_Airports_ktc/FeatureServer",
+
+        //adding the popup here
+        outFields: ["Fac_Name","Fac_Type","Owner_Name","City","State_Name"],
+        renderer: airportRenderer, // getting the airport icon
+        definitionExpression: "Fac_Type = 'AIRPORT'", //adding sql to filter for airports
+        labelingInfo: [airportLabels] //adding the labels
+        });
+
+      // Add the layer to the map
+      map.add(usairportsLayer);
+
+
+      //const to make the heliport labels
+      const heliportLabels = {
+              symbol: {
+                type: "text",
+                color: "#FFFFFF",
+                haloColor: "#5E8D74",
+                haloSize: "2px",
+                font: {
+                  size: "12px",
+                  family: "Noto Sans",
+                  style: "italic",
+                  weight: "normal"
+                }
+              },
+              labelPlacement: "above-center",
+              labelExpressionInfo: {
+                expression: "$feature.Fac_Name"
+              }
+            };
+
+      // add a custom icon to display airports
+      const heliportRenderer = {
+        "type": "simple",
+        "symbol": {
+          "type": "picture-marker",
+          "url": "https://raw.githubusercontent.com/kcrowebasspro/agol/main/icons/helicopter.png",
+          "width": "18px",
+          "height": "18px"
+        }
+      }
+
+      // Add the airports layer from the AGOL REST service
+      const heliportsLayer = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/US_Airports_ktc/FeatureServer",
+
+        //adding the popup here
+        outFields: ["Fac_Name","Fac_Type","Owner_Name","City","State_Name"],
+        renderer: heliportRenderer, // getting the airport icon
+        definitionExpression: "Fac_Type = 'HELIPORT'", //adding sql to filter for airports
+        labelingInfo: [heliportLabels] //adding the labels
+        });
+
+      // Add the layer to the map
+      map.add(heliportsLayer);
+
+      //Add a locate button
+      const locateWidget = new Locate({
+        view: view   // Attaches the Locate button to the view
+      });
+
+      //Add the Locate widget to the view object
+      view.ui.add(locateWidget, {
+        position: "top-left",
+        index: 2
+      });
+
+      //Add a search widget window
+      const searchWidget = new Search({
+        view: view
+      });
+      // Adds the search widget below other elements in
+      // the top left corner of the view
+      view.ui.add(searchWidget, {
+        position: "top-right",
+        index: 2
+      });
+
+      //create a basemap gallery for changing out base layers
+      const basemapGallery = new BasemapGallery({
+        view: view
+      });
+      // Add widget to the top right corner of the view
+      view.ui.add(basemapGallery, {
+        position: "top-right",
+        index: 2
+      });
+
+
+
+    });  
+   </script>
+
+  <!-- styling for the vewDiv-->
+  <style>  
+    html,  
+    body,  
+    #viewDiv {  
+      padding: 0;  
+      margin: 0;  
+      height: 100%;  
+      width: 100%;  
+      }  
+    </style> 
+
+</head>
+<body>
+  <div id="viewDiv"></div> 
+</body>
+</html>

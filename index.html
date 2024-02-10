@@ -297,7 +297,7 @@
 
         //adding the popup here
         outFields: ["Fac_Name","Fac_Type","Owner_Name","City","State_Name"],
-        renderer: heliportRenderer, // getting the airport icon
+        renderer: heliportRenderer, // getting the heliport icon
         definitionExpression: "Fac_Type = 'HELIPORT'", //adding sql to filter for airports
         labelingInfo: [heliportLabels] //adding the labels
         });
@@ -332,7 +332,7 @@
           "type": "simple",
           "symbol": {
             "type": "picture-marker",
-            "url": "https://raw.githubusercontent.com/kcrowebasspro/agol/main/icons/helicopter.png",
+            "url": "https://raw.githubusercontent.com/kcrowebasspro/agolrest/main/icons/flight.png",
             "width": "18px",
             "height": "18px"
           }
@@ -345,6 +345,8 @@
 
         //add popups
         outFields: ["AirportCode"],
+        renderer: myAiportRenderer, // getting the second airport icon
+        labelingInfo: [myAirportLabels] //adding the labels
 
       });
 

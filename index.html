@@ -322,6 +322,21 @@
       //adding the editable airports feature layer to the map
       map.add(myAirports);
 
+      //This section adds the editing widget
+      //set the point layer's LayerInfo
+      const pointInfos = {
+        layer: myAirports
+      }
+
+      //Begin the editor contstructor
+      const editor = new Editor({
+        view: view,
+        layerInfos: [pointInfos]
+      }); //end point editor constructor
+
+      //Add the widget to the view
+      view.ui.add(editor, "top-left");
+
       //Add the Locate widget to the view object
       view.ui.add(locateWidget, {
         position: "top-left",

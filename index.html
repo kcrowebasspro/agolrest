@@ -25,11 +25,14 @@
       //adding in the module for the feature layers
       "esri/layers/FeatureLayer",
 
+      // Add in the module for the editor
+      "esri/widgets/Editor",
+
       // Adding locate, search and basemap gallery
       "esri/widgets/Locate", 
       "esri/widgets/Search", 
       "esri/widgets/BasemapGallery"
-    ], (esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Locate, Search, BasemapGallery) => { 
+    ], (esriConfig, Map, MapView, Graphic, GraphicsLayer, FeatureLayer, Editor, Locate, Search, BasemapGallery) => { 
       
       esriConfig.apiKey = "AAPKad326cc7bcc84403ba8d6e5d75e1c216dZOCMYxyqe8Xx6vzlRhWc5FBpZ9YINE2zzacOcvncG8DsWXQT-2XA5QCTvQE3qT4";
 
@@ -306,6 +309,18 @@
       const locateWidget = new Locate({
         view: view   // Attaches the Locate button to the view
       });
+
+      //adding the const for a new feature layer
+      const myAirports = new FeatureLayer({
+        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/Kevins_Airports/FeatureServer",
+
+        //add popups
+        outFields: ["AirportCode"],
+
+      });
+
+      //adding the editable airports feature layer to the map
+      map.add(myAirports);
 
       //Add the Locate widget to the view object
       view.ui.add(locateWidget, {
